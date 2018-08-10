@@ -6,30 +6,30 @@ import (
 
 	"github.com/iost-official/Go-IOS-Protocol/account"
 	"github.com/iost-official/Go-IOS-Protocol/core/new_tx"
-	"github.com/smartystreets/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestBlockHeadSerialize(t *testing.T) {
-	convey.Convey("Test of block head encode and decode", t, func() {
-		head := BlockHead{
+	Convey("Test of block head encode and decode", t, func() {
+		head := &BlockHead{
 			Number:     1,
 			Witness:    "id1",
 			ParentHash: []byte("parent"),
 		}
-		hash, err := head.Encode()
-		convey.So(err, convey.ShouldBeNil)
-		var head_read BlockHead
-		err = head_read.Decode(hash)
-		convey.So(err, convey.ShouldBeNil)
-		convey.So(bytes.Equal(head.ParentHash, head_read.ParentHash), convey.ShouldBeTrue)
-		convey.So(head_read.Number == head.Number, convey.ShouldBeTrue)
-		convey.So(head_read.Witness == head.Witness, convey.ShouldBeTrue)
+		h := head.Encode()
+		var head1 BlockHead
+		err := head1.Decode(h)
+		So(err, ShouldBeNil)
+
+		So(bytes.Equal(head.ParentHash, head1.ParentHash), ShouldBeTrue)
+		So(head1.Number == head.Number, ShouldBeTrue)
+		So(head1.Witness == head.Witness, ShouldBeTrue)
 	})
 }
 
 func TestBlockSerialize(t *testing.T) {
-	convey.Convey("Test of block encode and decode", t, func() {
-		blk := Block{
+	Convey("Test of block encode and decode", t, func() {
+		blk := &Block{
 			Head: BlockHead{
 				Number:     1,
 				Witness:    "id1",
@@ -56,15 +56,14 @@ func TestBlockSerialize(t *testing.T) {
 			},
 		}
 		blk.Receipts = append(blk.Receipts, &receipt)
-		blkByte, err := blk.Encode()
-		blkRead := Block{}
-		err = blkRead.Decode(blkByte)
-		convey.So(err, convey.ShouldBeNil)
-		convey.So(bytes.Equal(blkRead.Head.ParentHash, blk.Head.ParentHash), convey.ShouldBeTrue)
-		convey.So(len(blkRead.Txs) == len(blk.Txs), convey.ShouldBeTrue)
-		convey.So(len(blkRead.Receipts) == len(blk.Receipts), convey.ShouldBeTrue)
-		convey.So(bytes.Equal(blkRead.Receipts[0].TxHash, tx0.Hash()), convey.ShouldBeTrue)
-		convey.So(err, convey.ShouldBeNil)
+		b := blk.Encode()
+		var blk1 Block
+		err := blk1.Decode(b)
+		So(err, ShouldBeNil)
 
+		So(bytes.Equal(blk1.Head.ParentHash, blk.Head.ParentHash), ShouldBeTrue)
+		So(len(blk1.Txs) == len(blk.Txs), ShouldBeTrue)
+		So(len(blk1.Receipts) == len(blk.Receipts), ShouldBeTrue)
+		So(bytes.Equal(blk1.Receipts[0].TxHash, tx0.Hash()), ShouldBeTrue)
 	})
 }

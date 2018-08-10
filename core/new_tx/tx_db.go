@@ -45,7 +45,10 @@ func (tdb *TxDBImpl) Push(txs []*Tx) error {
 	btch := tdb.db.Batch()
 	for _, tx := range txs {
 		hash := tx.Hash()
-		btch.Put(append(txPrefix, hash...), tx.Encode())
+		err := btch.Put(append(txPrefix, hash...), tx.Encode())
+		if err != nil {
+			return fmt.Errorf("failed to Put hash->tx: %v", err)
+		}
 	}
 	btch.Commit()
 	return nil
